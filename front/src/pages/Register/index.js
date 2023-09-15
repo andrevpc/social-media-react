@@ -1,7 +1,7 @@
 import { Col, Row } from "react-bootstrap";
 import styles from './styles.module.scss';
 import CardRegister from "../../components/CardRegister";
-import AlertComponent from "../../components/AlertComponent";
+import AlertComponent from "../../components/Alert";
 
 export default function RegisterPage() {
     return (

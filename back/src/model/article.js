@@ -18,7 +18,7 @@ const Article = mongoose.model('Article',
             required: true
         },
         likes: {
-            type: [Number],
+            type: [String],
             required: true
         },
         createdAt: {

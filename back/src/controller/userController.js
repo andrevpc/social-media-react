@@ -1,4 +1,4 @@
-const User = require('../model/login');
+const User = require('../model/user');
 const jwt = require('jsonwebtoken');
 const { Author } = require('../model/author');
 require('dotenv').config();
@@ -9,6 +9,7 @@ class AuthController {
         var bytes = CryptoJS.AES.decrypt(req.body.jsonCrypt, process.env.SECRET);
         const decryptd = bytes.toString(CryptoJS.enc.Utf8);
         const json = JSON.parse(decryptd);
+        console.log(json)
 
         const { name, birth, email, password, confirmPassword } = json;
 
@@ -26,6 +27,7 @@ class AuthController {
 
         const userExist = await User.findOne({ email: email });
 
+        console.log("passwordCrypt")
         if (userExist)
             return res.status(422).json({ message: "insira outro e-mail" });
         const passwordCrypt = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
@@ -57,18 +59,23 @@ class AuthController {
         }
     }
     static async login(req, res) {
-        // var bytes = CryptoJS.AES.decrypt(req.body.jsonCrypt, process.env.SECRET);
-        // const decryptd = bytes.toString(CryptoJS.enc.Utf8);
-        // const json = JSON.parse(decryptd);
-        const { email, password } = req.body;
+        var bytes = CryptoJS.AES.decrypt(req.body.jsonCrypt, process.env.SECRET);
+        const decryptd = bytes.toString(CryptoJS.enc.Utf8);
+        const json = JSON.parse(decryptd);
+
+        const { email, password } = json;
+
         if (!email)
-            return res.status(422).json({ message: "O e-mail é obrigatório" });
+            return res.status(422).json({ message: "O e-mail é obrigatório" })
+        ;
         if (!password)
             return res.status(422).json({ message: "A senha é obrigatória" });
+        console.log(json)
         const user = await User.findOne({ email: email });
+        const passwordDecryptd = CryptoJS.AES.decrypt(user.password, process.env.SECRET)
         if (!user)
             return res.status(422).json({ message: "Usuário e/ou senha inválido" });
-        if (CryptoJS.AES.decrypt(user.password, process.env.SECRET) === password)
+        if (passwordDecryptd === password)
             return res.status(422).send({ message: "Usuário e/ou senha inválido" })
         try {
             const secret = process.env.SECRET

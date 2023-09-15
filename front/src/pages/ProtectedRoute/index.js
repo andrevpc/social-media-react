@@ -15,7 +15,7 @@ export default function ProtectedRoute({ errorPage, targetPage }) {
         const decodeToken = jwt_decode(token)
         const { exp } = decodeToken;
 
-        if (exp + '000' - Date.now()) {
+        if (exp + '000' - Date.now() < 0) {
             setPage(errorPage)
             return
         }

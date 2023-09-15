@@ -2,52 +2,63 @@ const Article = require('../model/article');
 const authorController = require('./authorController');
 const fs = require('fs');
 const path = require('path');
+const jwtDecode = require('jwt-decode');
 
 class ArticleController {
-    static createLog(error){
+    static createLog(error) {
         const timestamp = Date.now();
         const archivePath = path.resolve(__dirname, '..', `logs-${timestamp}.txt`);
-        const errorString = JSON.stringify(error.message) 
-        fs.writeFile(archivePath, errorString, function(err, result) {
-            if(err) console.log(err)
+        const errorString = JSON.stringify(error.message)
+        fs.writeFile(archivePath, errorString, function (err, result) {
+            if (err) console.log(err)
         })
     }
 
-    static async getAll(req, res){
+    static async getAll(req, res) {
         let page = req.params.page;
-        let limit = 5;
+        let limit = 1;
         let skip = limit * (page - 1);
         try {
             const articles = await Article.find().skip(skip).limit(limit);
             return res.status(200).send(articles);
         } catch (error) {
             ArticleController.createLog(error);
-            return res.status(500).send({ message: "Falha ao carregar os Artigos"})
+            return res.status(500).send({ message: "Falha ao carregar os Artigos" })
         }
     };
-    
-    static async create(req, res){
-        const { title, text, authorid } = req.body;
 
-        if(!title || !text ||!authorid) 
+    static async getPages(req, res) {
+        try {
+            const articles = await Article.find();
+            return res.status(200).send(articles.length);
+        } catch (error) {
+            ArticleController.createLog(error);
+            return res.status(500).send({ message: "Falha ao carregar os Artigos" })
+        }
+    }
+
+    static async create(req, res) {
+        const { title, text, userId } = req.body;
+
+        if (!title || !text || !userId)
             return res.status(400).send({ message: "os campos não podem estarem vazios " });
-        
-        if(title.length < 3) 
+
+        if (title.length < 3)
             return res.status(400).send({ message: "o titulo não pode ser menor que 3 caracteres" });
-        
-        if(text.length < 15) 
+
+        if (text.length < 15)
             return res.status(400).send({ message: "o artigo não pode ser menor que 15 caracteres" });
 
-        if(authorid.length < 3)
+        if (userId.length < 3)
             return res.status(400).send({ message: "O autor não pode ser menor que 3 caracteres" })
 
 
-        const author = await authorController.getAuthor(authorid);
+        const author = await authorController.getAuthor(userId);
         console.log(author)
         try {
             const article = {
-                title, 
-                text, 
+                title,
+                text,
                 likes: [],
                 author,
                 createdAt: Date.now(),
@@ -62,19 +73,21 @@ class ArticleController {
         }
     };
 
-    static async likeArticle(req, res){
-        const { id } = req.params;
-        const { authorId } = req.body;
+    static async likeArticle(req, res) {
+        const { articleId } = req.params;
+        const { token } = req.body;
 
-        if(!id) return res.status(400).send({ message: "No id provider" })
+        const { id } = jwtDecode(token)
+
+        if (!articleId) return res.status(400).send({ message: "No id provider" })
 
         try {
-            const article = await Article.findById(id);
+            const article = await Article.findById(articleId);
             const { likes } = article;
-            
-            likes.push(authorId);
 
-            await Article.findByIdAndUpdate({_id: id}, {likes})
+            likes.push(id);
+
+            await Article.findByIdAndUpdate({ _id: articleId }, { likes })
             return res.status(200).send();
         } catch (error) {
             ArticleController.createLog(error);
@@ -82,11 +95,11 @@ class ArticleController {
         }
     };
 
-    static async unlikeArticle(req, res){
+    static async unlikeArticle(req, res) {
         const { id } = req.params;
-        const { authorId } = req.body;
+        const { userId } = req.body;
 
-        if(!id) return res.status(400).send({ message: "No id provider" });
+        if (!id) return res.status(400).send({ message: "No id provider" });
 
         try {
             const article = await Article.findById(id);
@@ -94,12 +107,12 @@ class ArticleController {
             const tempLikes = [];
 
             likes.map(like => {
-                if(like !== authorId) tempLikes.push(authorId);
+                if (like !== userId) tempLikes.push(userId);
             })
 
             likes = tempLikes;
 
-            await Article.findByIdAndUpdate({_id: id}, {likes})
+            await Article.findByIdAndUpdate({ _id: id }, { likes })
             return res.status(200).send();
         } catch (error) {
             ArticleController.createLog(error);

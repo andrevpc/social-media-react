@@ -3,7 +3,7 @@ import { Alert } from "react-bootstrap";
 import { AlertContext } from "../../context/alert";
 import styles from './styles.module.scss';
 
-export default function Alert() {
+export default function AlertComponent() {
     const { message, variant, show, setShow } = useContext(AlertContext);
     return (
         <Alert
