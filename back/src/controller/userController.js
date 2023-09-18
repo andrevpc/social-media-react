@@ -1,15 +1,14 @@
 const User = require('../model/user');
 const jwt = require('jsonwebtoken');
-const { Author } = require('../model/author');
 require('dotenv').config();
 const CryptoJS = require("crypto-js");
+const bcrypt = require('bcryptjs');
 
 class AuthController {
     static async register(req, res) {
         var bytes = CryptoJS.AES.decrypt(req.body.jsonCrypt, process.env.SECRET);
         const decryptd = bytes.toString(CryptoJS.enc.Utf8);
         const json = JSON.parse(decryptd);
-        console.log(json)
 
         const { name, birth, email, password, confirmPassword } = json;
 
@@ -27,28 +26,20 @@ class AuthController {
 
         const userExist = await User.findOne({ email: email });
 
-        console.log("passwordCrypt")
         if (userExist)
             return res.status(422).json({ message: "insira outro e-mail" });
-        const passwordCrypt = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
-
-        const author = new Author({
-            name,
-            email,
-            birth,
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-            removedAt: null,
-        })
+        // const passwordCrypt = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
+        const salt = await bcrypt.genSalt(12);
+        const newPassword = await bcrypt.hash(password, salt);
+        console.log(newPassword)
 
         const user = new User({
             login: email,
-            author,
             email,
-            password: passwordCrypt,
+            password: newPassword,
             createdAt: Date.now(),
             updatedAt: Date.now(),
-            removedAt: null,
+            removedAt: null
         });
 
         try {
@@ -66,16 +57,15 @@ class AuthController {
         const { email, password } = json;
 
         if (!email)
-            return res.status(422).json({ message: "O e-mail é obrigatório" })
-        ;
+            return res.status(422).json({ message: "O e-mail é obrigatório" });
         if (!password)
             return res.status(422).json({ message: "A senha é obrigatória" });
-        console.log(json)
         const user = await User.findOne({ email: email });
-        const passwordDecryptd = CryptoJS.AES.decrypt(user.password, process.env.SECRET)
+        // const passwordDecryptd = CryptoJS.AES.decrypt(user.password, process.env.SECRET)
         if (!user)
             return res.status(422).json({ message: "Usuário e/ou senha inválido" });
-        if (passwordDecryptd === password)
+        // if (passwordDecryptd === password)
+        if(!await bcrypt.compare(password, user.password))
             return res.status(422).send({ message: "Usuário e/ou senha inválido" })
         try {
             const secret = process.env.SECRET
@@ -91,6 +81,14 @@ class AuthController {
             return res.status(200).send({ token: token })
         } catch (error) {
             return res.status(500).send({ message: "Something failed", data: error.message })
+        }
+    }
+    static async getUser(_id) {
+        try {
+            const user = await User.findById(_id)
+            return user
+        } catch (error) {
+            throw error;
         }
     }
 }

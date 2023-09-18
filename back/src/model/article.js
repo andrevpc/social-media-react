@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { authorSchema } = require('./author');
+const User = require('./user')
 
 const Article = mongoose.model('Article',
     new mongoose.Schema({
@@ -13,8 +13,8 @@ const Article = mongoose.model('Article',
             required: true,
             minlength: 15
         },
-        author: {
-            type: authorSchema,
+        user: {
+            type: User.schema,
             required: true
         },
         likes: {

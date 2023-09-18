@@ -23,10 +23,12 @@ export default function FormComponent() {
             const token = sessionStorage.getItem('token');
             const decodeToken = jwt_decode(token)
             const { id } = decodeToken;
+            const userId = id;
 
             const res = await axios.post('http://localhost:8080/api/article', {
-                authorid: id, title, text
+                title, userId, text
             });
+
 
             setMessage(res.data.message);
             setShow(true);

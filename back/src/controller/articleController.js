@@ -1,5 +1,5 @@
 const Article = require('../model/article');
-const authorController = require('./authorController');
+const userController = require('./userController');
 const fs = require('fs');
 const path = require('path');
 const jwtDecode = require('jwt-decode');
@@ -16,7 +16,7 @@ class ArticleController {
 
     static async getAll(req, res) {
         let page = req.params.page;
-        let limit = 1;
+        let limit = 5;
         let skip = limit * (page - 1);
         try {
             const articles = await Article.find().skip(skip).limit(limit);
@@ -53,14 +53,14 @@ class ArticleController {
             return res.status(400).send({ message: "O autor não pode ser menor que 3 caracteres" })
 
 
-        const author = await authorController.getAuthor(userId);
-        console.log(author)
+        const user = await userController.getUser(userId);
+        console.log(user)
         try {
             const article = {
                 title,
                 text,
                 likes: [],
-                author,
+                user,
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
                 removedAt: null,
