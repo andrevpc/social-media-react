@@ -38,7 +38,7 @@ class ArticleController {
     }
 
     static async create(req, res) {
-        const { title, text, userId } = req.body;
+        const { title, text, userId, articleId } = req.body;
 
         if (!title || !text || !userId)
             return res.status(400).send({ message: "os campos não podem estarem vazios " });
@@ -54,9 +54,8 @@ class ArticleController {
 
 
         const user = await userController.getUser(userId);
-        console.log(user)
         try {
-            const article = {
+            const newArticle = {
                 title,
                 text,
                 likes: [],
@@ -64,11 +63,20 @@ class ArticleController {
                 createdAt: Date.now(),
                 updatedAt: Date.now(),
                 removedAt: null,
+                comments: []
             }
-            await Article.create(article)
+            if (articleId) {
+                const article = await Article.findById(articleId);
+                const { comments } = article;
+
+                comments.push(newArticle);
+
+                await Article.findByIdAndUpdate({ _id: articleId }, { comments })
+                return res.status(200).send();
+            }
+            await Article.create(newArticle)
             return res.status(201).send({ message: "Artigo criado com sucesso" })
         } catch (error) {
-            ArticleController.createLog(error);
             return res.status(500).send({ error: "Falha ao salvar o artigo", data: error.message });
         }
     };

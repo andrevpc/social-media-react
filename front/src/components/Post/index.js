@@ -28,7 +28,7 @@ export default function Post() {
     }
 
     function handleUp() {
-        if (allPost.length === 1) {
+        if (allPost.length === 5) {
             setPage(++page)
         }
     }

@@ -33,6 +33,10 @@ const Article = mongoose.model('Article',
             type: Date,
             required: false
         },
+        comments: {
+            type: [],
+            required: false
+        }
     }));
     
 module.exports = Article
