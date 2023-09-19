@@ -22,9 +22,8 @@ export default function CardPost({ postList, clickfunc }) {
                         {artigo.comments.length} {text.comments}
                     </div>
                 </Card.Body>
-                <div style={{
-                    marginLeft: "20px"
-                }}>< CardPost postList={artigo.comments} clickfunc={clickfunc} />
+                <div className={styles.comments}>
+                    < CardPost postList={artigo.comments} clickfunc={clickfunc} />
                 </div>
             </Card>
         )

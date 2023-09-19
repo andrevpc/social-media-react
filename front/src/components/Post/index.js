@@ -5,6 +5,7 @@ import {
 } from 'react-bootstrap'
 import axios from 'axios';
 import CardPost from '../CardPost';
+import styles from "./styles.module.css";
 
 export default function Post() {
     var [page, setPage] = useState(1);
@@ -13,6 +14,7 @@ export default function Post() {
     async function getPosts() {
         const res = await axios.get(`http://localhost:8080/api/article/${page}`)
         setAllPost(res.data)
+        console.log(res)
     }
 
     useEffect(() => {
@@ -38,7 +40,7 @@ export default function Post() {
     }
 
     return (
-        <Container>
+        <Container className={styles.container}>
             <CardPost postList={ allPost } clickfunc={ handleClick } />
             <Button onClick={handleDown}>-</Button>
             {page}
