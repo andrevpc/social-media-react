@@ -6,13 +6,15 @@ import { AlertContext } from "../../context/alert";
 import { SECRET } from "../../env.js";
 import axios from "axios";
 import CryptoJS from 'crypto-js';
+import useBind from "../../hooks/useBind";
 
 export default function CardLogin() {
     const { setMessage, setShow, setVariant } = useContext(AlertContext);
 
+    const [email, bindEmail, resetEmail] = useBind("")
+    const [password, bindPassword, resetPassword] = useBind("")
+
     const navigate = useNavigate();
-    var [email, setEmail] = useState('');
-    var [password, setPassword] = useState('');
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -56,16 +58,8 @@ export default function CardLogin() {
                     className={styles.card__form}
                     onSubmit={handleSubmit}
                 >
-                    <Form.Control
-                        value={email}
-                        placeholder="Insira seu e-mail"
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Form.Control
-                        value={password}
-                        placeholder="Insira sua senha"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
+                    <Form.Control placeholder="Insira seu e-mail" {...bindEmail}/>
+                    <Form.Control placeholder="Insira sua senha" {...bindPassword}/>
                     <Button
                         className={styles.card__form__button}
                         type='submit'

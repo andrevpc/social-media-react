@@ -72,7 +72,7 @@ class ArticleController {
                 comments.push(newArticle);
 
                 await Article.findByIdAndUpdate({ _id: articleId }, { comments })
-                return res.status(200).send();
+                return res.status(200).send({ message: "Artigo criado com sucesso" });
             }
             await Article.create(newArticle)
             return res.status(201).send({ message: "Artigo criado com sucesso" })
@@ -92,8 +92,10 @@ class ArticleController {
         try {
             const article = await Article.findById(articleId);
             const { likes } = article;
-
-            likes.push(id);
+            if(likes.includes(id))
+                likes.remove(id)
+            else
+                likes.push(id);
 
             await Article.findByIdAndUpdate({ _id: articleId }, { likes })
             return res.status(200).send();

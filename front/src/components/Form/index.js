@@ -10,12 +10,15 @@ import {
 } from "react-bootstrap";
 import styles from './styles.module.scss';
 import { AlertContext } from "../../context/alert";
+import { LanguageContext } from "../../context/language";
+import useBind from "../../hooks/useBind";
 
 export default function FormComponent() {
     const { setMessage, setShow, setVariant } = useContext(AlertContext);
 
-    var [title, setTitle] = useState('');
-    var [text, setText] = useState('');
+    const { text } = useContext(LanguageContext)
+    const [title, bindTitle, resetTitle] = useBind("")
+    const [textInput, bindTextInput, resetTextInput] = useBind("")
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -26,18 +29,18 @@ export default function FormComponent() {
             const userId = id;
 
             const res = await axios.post('http://localhost:8080/api/article', {
-                title, userId, text
+                title, userId, text: textInput
             });
 
 
             setMessage(res.data.message);
             setShow(true);
             setVariant('success');
-            setTitle('');
-            setText('');
+            resetTitle()
+            resetTextInput()
         } catch (error) {
             console.log(error);
-            setMessage("Erro ao inserir o artigo, reveja as informações e tente novamente");
+            setMessage(text.articleError);
             setShow(true);
             setVariant('danger');
         }
@@ -47,21 +50,11 @@ export default function FormComponent() {
             <Row>
                 <Col>
                     <Form onSubmit={handleSubmit} className={styles.form}>
-                        <Form.Text className={styles.form__title}>Digite Aqui seu Artigo</Form.Text>
-                        <Form.Control
-                            placeholder="Titulo"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                        <Form.Control
-                            as='textarea'
-                            placeholder="Texto"
-                            rows={5}
-                            value={text}
-                            onChange={(e) => setText(e.target.value)}
-                        />
+                        <Form.Text className={styles.form__title}>{ text.articleInput }</Form.Text>
+                        <Form.Control placeholder={text.title} {...bindTitle} />
+                        <Form.Control placeholder={text.text} {...bindTextInput} />
                         <Col xs={12} sm={9} md={6} className={styles.form__div}>
-                            <Button type="submit" className={styles.form__div__button} >Salvar</Button>
+                            <Button type="submit" className={styles.form__div__button} >{text.post}</Button>
                         </Col>
                     </Form>
                 </Col>

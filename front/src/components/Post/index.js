@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
     Button,
-    Card,
     Container
 } from 'react-bootstrap'
-import { AiOutlineLike } from 'react-icons/ai'
-import styles from './styles.module.scss';
 import axios from 'axios';
+import CardPost from '../CardPost';
 
 export default function Post() {
     var [page, setPage] = useState(1);
@@ -39,27 +37,9 @@ export default function Post() {
         }
     }
 
-    const RenderPosts = () => {
-        return allPost.map((artigo) => {
-            return (
-                <Card key={artigo.id} className={styles.card} >
-                    <Card.Title className={styles.card__title}>
-                        {artigo.title}
-                    </Card.Title>
-                    <Card.Body className={styles.card__body}>
-                        <Card.Text className={styles.card__body__article}>{artigo.text}</Card.Text>
-                        <div className='d-flex align-items-center '>
-                            {artigo.likes.length}<Button variant='light' onClick={() => handleClick(artigo._id)}><AiOutlineLike /></Button>
-                        </div>
-                    </Card.Body>
-                </Card>
-            )
-        })
-    }
-
     return (
         <Container>
-            <RenderPosts />
+            <CardPost postList={ allPost } clickfunc={ handleClick } />
             <Button onClick={handleDown}>-</Button>
             {page}
             <Button onClick={handleUp}>+</Button>
