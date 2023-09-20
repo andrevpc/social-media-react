@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const User = mongoose.model('User',
     new mongoose.Schema({
-        login: {
+        username: {
             type: String,
             required: true,
             minlength: 3

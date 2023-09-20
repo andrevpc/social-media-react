@@ -6,7 +6,6 @@ export default function ProtectedRoute({ errorPage, targetPage }) {
 
     function renderPage() {
         const token = sessionStorage.getItem('token');
-        console.log(token)
         if (!token) {
             setPage(errorPage)
             return

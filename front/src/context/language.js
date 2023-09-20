@@ -7,6 +7,7 @@ export const LanguageProvider = ({ children }) => {
     const [isPortuguese, setIsPortuguese] = useState(false)
 
     const portuguese = {
+        abbreviation: "PT",
         home: "Casa",
         add: "Adicionar",
         comments: "comentários",
@@ -14,10 +15,12 @@ export const LanguageProvider = ({ children }) => {
         text: "Texto",
         post: "Postar",
         articleInput: "Digite Aqui seu Artigo",
-        articleError: "Erro ao inserir o artigo, reveja as informações e tente novamente"
+        articleError: "Erro ao inserir o artigo, reveja as informações e tente novamente",
+        boschBrazil: "Bosch no Brasil"
     }
 
     const english = {
+        abbreviation: "EN",
         home: "Home",
         add: "Add",
         comments: "comments",
@@ -25,7 +28,8 @@ export const LanguageProvider = ({ children }) => {
         text: "Text",
         post: "Post",
         articleInput: "Write your article here",
-        articleError: "Error inserting the article"
+        articleError: "Error inserting the article",
+        boschBrazil: "Bosch in Brazil"
     }
 
     const [text, setText] = useState(english)
@@ -33,9 +37,9 @@ export const LanguageProvider = ({ children }) => {
     function setLanguage() {
         setIsPortuguese(!isPortuguese)
         if (isPortuguese)
-            setText(portuguese)
-        if (!isPortuguese)
             setText(english)
+        if (!isPortuguese)
+            setText(portuguese)
     }
 
     return (

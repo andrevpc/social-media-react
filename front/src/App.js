@@ -10,12 +10,10 @@ import { AccessDenied } from './pages/AccessDenied';
 import NavBar from './components/NavBar';
 import NotFoundPage from './pages/NotFoundPage';
 import { LanguageProvider } from './context/language';
-import { DarkModeProvider } from './context/darkMode';
 
 function App() {
   return (
     <>
-      <DarkModeProvider>
         <LanguageProvider>
           <AlertProvider>
             <Routes>
@@ -29,12 +27,12 @@ function App() {
               }>
                 <Route path='/home' element={<Home />} />
                 <Route path='/add' element={<AddPost />} />
+                <Route path='/add/:postId' element={<AddPost />} />
               </Route>
               <Route path='*' element={<NotFoundPage />} />
             </Routes>
           </AlertProvider>
         </LanguageProvider>
-      </DarkModeProvider>
     </>
   );
 }

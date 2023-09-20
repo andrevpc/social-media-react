@@ -31,10 +31,9 @@ class AuthController {
         // const passwordCrypt = CryptoJS.AES.encrypt(password, process.env.SECRET).toString();
         const salt = await bcrypt.genSalt(12);
         const newPassword = await bcrypt.hash(password, salt);
-        console.log(newPassword)
 
         const user = new User({
-            login: email,
+            username: name,
             email,
             password: newPassword,
             createdAt: Date.now(),

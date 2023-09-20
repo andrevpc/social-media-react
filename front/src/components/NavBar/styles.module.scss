@@ -130,10 +130,17 @@
     button {
         border: 0;
         padding: 0.5rem 1rem;
-
         color: #222;
         background-color: transparent;
     }
+}
+
+.door {
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 30px;
+    background-image: url('../../../public/exit.svg');
 }
 
 @media(max-width: 1130px) {
@@ -144,4 +151,8 @@
     .content {
         display: none;
     }
+}
+
+.outlet {
+    margin-top: 5rem;
 }
